@@ -25,7 +25,7 @@ Install dependencies:
 Configure your .env file with your database credentials and Django secret key.
 Apply database migrations:
 Start the development server:
-Open http://127.0.0.1:8000/ in your browser.
+Open http://127.0.0.1:8000/login/ , http://127.0.0.1:8000/register/ , http://127.0.0.1:8000/dashboard/ , http://127.0.0.1:8000/profile , http://127.0.0.1:8000/admin-dashboard/ in your browser.
 Project Status
 Under Development
 Developer
