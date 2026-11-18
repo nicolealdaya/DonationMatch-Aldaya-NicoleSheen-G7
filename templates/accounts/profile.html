@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | DonationMatch</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">DonationMatch</div>
+        <div>
+
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+
+            {% else %}
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+
+            {% endif %}
+            <a href="{% url 'profile' %}">Profile</a>
+            <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">Logout</button>
+            </form>
+        </div>
+    </nav>
+    <main class="main-content">
+        <h1 class="page-title">My Profile</h1>
+        <div class="form-container">
+
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert">
+
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+            <form method="POST">
+
+                {% csrf_token %}
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="{{ request.user.full_name }}" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" value="{{ request.user.username }}" disabled>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="{{ request.user.email }}" required>
+                <label for="contact_number">Contact Number</label>
+                <input type="text" id="contact_number" name="contact_number" value="{{ request.user.contact_number }}">
+                <label for="role">Account Role</label>
+                <input type="text" id="role" value="{{ request.user.get_role_display }}" disabled>
+                <button type="submit" class="btn">
+
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

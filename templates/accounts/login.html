@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | DonationMatch</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="form-container">
+<h1>DonationMatch</h1>
+<h2>Welcome Back!</h2>
+       {% if messages %}
+           {% for message in messages %}
+<div class="alert">
+                   {{ message }}
+</div>
+           {% endfor %}
+       {% endif %}
+<form method="POST">
+           {% csrf_token %}
+           {{ form.as_p }}
+<button type="submit" class="btn">
+               Login
+</button>
+</form>
+<p style="text-align: center; margin-top: 20px;">
+           Don't have an account?
+<a href="{% url 'register' %}">Register here</a>
+</p>
+</div>
+</body>
+</html>

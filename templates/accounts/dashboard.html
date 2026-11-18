@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Dashboard | DonationMatch</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<nav class="navbar">
+<div class="logo">DonationMatch</div>
+<div>
+<a href="{% url 'dashboard' %}">Dashboard</a>
+<a href="{% url 'profile' %}">Profile</a>
+<form method="POST" action="{% url 'logout' %}" style="display: inline;">
+               {% csrf_token %}
+<button type="submit" class="btn btn-secondary">Logout</button>
+</form>
+</div>
+</nav>
+<main class="main-content">
+<h1 class="page-title">Member Dashboard</h1>
+<div class="card">
+<h2>Welcome, {{ request.user.full_name|default:request.user.username }}!</h2>
+           {% if request.user.role == 'donor' %}
+<span class="badge">Donor Account</span>
+<p>Thank you for being part of DonationMatch!</p>
+<p>Share your available items and help organizations in need.</p>
+           {% elif request.user.role == 'organization' %}
+<span class="badge">Organization Account</span>
+<p>Welcome to your organization dashboard!</p>
+<p>Post the items your organization needs and connect with generous donors.</p>
+           {% endif %}
+</div>
+<h2 class="page-title">Quick Overview</h2>
+<div class="card">
+<h2>Your DonationMatch Activities</h2>
+<p>Manage your donations and requests in one place.</p>
+<p><strong>Donations:</strong> Coming soon</p>
+<p><strong>Requests:</strong> Coming soon</p>
+<p><strong>Matches:</strong> Coming soon</p>
+</div>
+<div class="card">
+<h2>Getting Started</h2>
+           {% if request.user.role == 'donor' %}
+<p>You can help your community by sharing items you no longer need.</p>
+           {% elif request.user.role == 'organization' %}
+<p>You can help your organization receive items by posting your needs.</p>
+           {% endif %}
+</div>
+</main>
+</body>
+</html>

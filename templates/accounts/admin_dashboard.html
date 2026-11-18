@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | DonationMatch</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<nav class="navbar">
+<div class="logo">DonationMatch</div>
+<div>
+<a href="{% url 'admin_dashboard' %}">Dashboard</a>
+<a href="{% url 'profile' %}">Profile</a>
+<form method="POST" action="{% url 'logout' %}" style="display: inline;">
+               {% csrf_token %}
+<button type="submit" class="btn btn-secondary">Logout</button>
+</form>
+</div>
+</nav>
+<main class="main-content">
+<h1 class="page-title">Admin Dashboard</h1>
+<p>Welcome, {{ request.user.full_name|default:request.user.username }}!</p>
+<div class="card">
+<h2>System Overview</h2>
+<p>Total Users: <strong>{{ total_users }}</strong></p>
+<p>Total Donors: <strong>{{ total_donors }}</strong></p>
+<p>Total Organizations: <strong>{{ total_organizations }}</strong></p>
+</div>
+<div class="card">
+<h2>Administration</h2>
+<p>Manage and monitor DonationMatch user accounts.</p>
+<a href="/admin/" class="btn">Open Django Administration</a>
+</div>
+</main>
+</body>
+</html>
