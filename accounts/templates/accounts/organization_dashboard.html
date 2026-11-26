@@ -1,0 +1,119 @@
+{% extends "accounts/base.html" %}
+{% block title %}Organization Dashboard | DonationMatch{% endblock %}
+{% block content %}
+<style>
+    .dashboard-header {
+        background: #8D343C;
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+
+    .dashboard-header h2 {
+        color: #FFC900;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-card {
+        background: white;
+        border: 1px solid #eeeeee;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .dashboard-card h3 {
+        color: #8D343C;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .dashboard-links a,
+    .dashboard-links button {
+        display: inline-block;
+        background: #8D343C;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .dashboard-links a:hover,
+    .dashboard-links button:hover {
+        background: #702830;
+    }
+
+    .logout-button {
+        background: #FFC900 !important;
+        color: #333333 !important;
+    }
+
+    @media (max-width: 600px) {
+        .dashboard-header {
+            padding: 22px;
+        }
+
+        .dashboard-links {
+            flex-direction: column;
+        }
+
+        .dashboard-links a,
+        .dashboard-links button {
+            text-align: center;
+        }
+    }
+</style>
+<div class="dashboard-header">
+    <h2>Welcome, {{ request.user.full_name }}!</h2>
+    <p>Organization Dashboard</p>
+    <p>Thank you for helping communities receive the support they need.</p>
+</div>
+<div class="dashboard-card">
+    <h3>Organization Information</h3>
+    <p>
+        <strong>Organization Name:</strong>
+        {{ request.user.organization.organization_name }}
+    </p>
+    <p>
+        <strong>Contact Person:</strong>
+        {{ request.user.full_name }}
+    </p>
+    <p>
+        <strong>Username:</strong>
+        {{ request.user.username }}
+    </p>
+    <p>
+        <strong>Email:</strong>
+        {{ request.user.email }}
+    </p>
+    <p>
+        <strong>Role:</strong> Organization
+    </p>
+</div>
+<div class="dashboard-card">
+    <h3>What You Can Do</h3>
+    <p>
+        Manage your organization account and connect with generous donors
+        through DonationMatch.
+    </p>
+    <div class="dashboard-links">
+        <a href="{% url 'profile' %}">My Profile</a>
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

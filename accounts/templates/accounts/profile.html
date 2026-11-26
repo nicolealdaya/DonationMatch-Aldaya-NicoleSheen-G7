@@ -1,0 +1,97 @@
+{% extends "accounts/base.html" %}
+{% block title %}My Profile | DonationMatch{% endblock %}
+{% block content %}
+<style>
+   .profile-container {
+       max-width: 650px;
+       margin: 30px auto;
+       background: white;
+       padding: 30px;
+       border-radius: 12px;
+       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+   }
+   .profile-container h2 {
+       color: #8D343C;
+       margin-bottom: 10px;
+   }
+   .profile-description {
+       color: #666;
+       margin-bottom: 25px;
+   }
+   .profile-form p {
+       margin-bottom: 18px;
+   }
+   .profile-form label {
+       display: block;
+       font-weight: bold;
+       margin-bottom: 7px;
+       color: #333;
+   }
+   .profile-form input {
+       width: 100%;
+       padding: 11px;
+       border: 1px solid #cccccc;
+       border-radius: 6px;
+       box-sizing: border-box;
+   }
+   .errorlist {
+       color: #b00020;
+       font-size: 14px;
+       padding-left: 20px;
+   }
+   .profile-buttons {
+       display: flex;
+       flex-wrap: wrap;
+       gap: 12px;
+       margin-top: 25px;
+   }
+   .profile-buttons button,
+   .profile-buttons a {
+       padding: 12px 20px;
+       border: none;
+       border-radius: 6px;
+       text-decoration: none;
+       font-weight: bold;
+       cursor: pointer;
+   }
+   .save-button {
+       background: #8D343C;
+       color: white;
+   }
+   .back-button {
+       background: #FFC900;
+       color: #333;
+   }
+</style>
+<div class="profile-container">
+<h2>My Profile</h2>
+<p class="profile-description">
+       View and update your personal account information.
+</p>
+<form method="POST" class="profile-form">
+       {% csrf_token %}
+       {{ form.non_field_errors }}
+       {% for field in form %}
+<p>
+               {{ field.label_tag }}
+               {{ field }}
+               {{ field.errors }}
+</p>
+       {% endfor %}
+<div class="profile-buttons">
+<button type="submit" class="save-button">
+               Save Changes
+</button>
+           {% if request.user.role == "donor" %}
+<a href="{% url 'donor_dashboard' %}" class="back-button">
+                   Back to Dashboard
+</a>
+           {% else %}
+<a href="{% url 'organization_dashboard' %}" class="back-button">
+                   Back to Dashboard
+</a>
+           {% endif %}
+</div>
+</form>
+</div>
+{% endblock %}

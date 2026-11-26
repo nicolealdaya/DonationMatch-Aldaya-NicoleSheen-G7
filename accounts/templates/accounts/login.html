@@ -1,0 +1,184 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Login | DonationMatch{% endblock %}
+
+{% block content %}
+<style>
+    .login-container {
+
+        max-width: 450px;
+
+        margin: 40px auto;
+
+        padding: 35px;
+
+        background: #ffffff;
+
+        border: 1px solid #eeeeee;
+
+        border-radius: 12px;
+
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    }
+
+    h2 {
+
+        color: #8D343C;
+
+        text-align: center;
+
+        margin-bottom: 10px;
+
+    }
+
+    .subtitle {
+
+        text-align: center;
+
+        color: #777777;
+
+        margin-bottom: 25px;
+
+    }
+
+    .form-group {
+
+        margin-bottom: 18px;
+
+    }
+
+    label {
+
+        display: block;
+
+        margin-bottom: 7px;
+
+        font-weight: bold;
+
+    }
+
+    input {
+
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #cccccc;
+
+        border-radius: 6px;
+
+        font-size: 15px;
+
+    }
+
+    input:focus {
+
+        outline: none;
+
+        border-color: #8D343C;
+
+    }
+
+    button {
+
+        width: 100%;
+
+        padding: 13px;
+
+        background: #8D343C;
+
+        color: white;
+
+        border: none;
+
+        border-radius: 6px;
+
+        font-size: 16px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+    }
+
+    button:hover {
+
+        background: #702830;
+
+    }
+
+    .error {
+
+        color: #c62828;
+
+        font-size: 14px;
+
+        margin-bottom: 15px;
+
+        text-align: center;
+
+    }
+
+    .register-link {
+
+        text-align: center;
+
+        margin-top: 20px;
+
+    }
+
+    .register-link a {
+
+        color: #8D343C;
+
+        font-weight: bold;
+
+        text-decoration: none;
+
+    }
+</style>
+<div class="login-container">
+    <h2>Welcome Back!</h2>
+    <p class="subtitle">
+
+        Login to your DonationMatch account.
+    </p>
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+
+        {% for error in form.non_field_errors %}
+        <div class="error">{{ error }}</div>
+
+        {% endfor %}
+
+        {% endif %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">
+
+                Username
+            </label>
+
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">
+
+                Password
+            </label>
+
+            {{ form.password }}
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <p class="register-link">
+
+        Don't have an account?
+        <a href="{% url 'register' %}">Register here</a>
+    </p>
+</div>
+
+{% endblock %}
