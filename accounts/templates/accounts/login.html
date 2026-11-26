@@ -1,184 +1,377 @@
 {% extends "accounts/base.html" %}
-
 {% block title %}Login | DonationMatch{% endblock %}
-
 {% block content %}
 <style>
-    .login-container {
-
-        max-width: 450px;
-
-        margin: 40px auto;
-
-        padding: 35px;
-
-        background: #ffffff;
-
-        border: 1px solid #eeeeee;
-
-        border-radius: 12px;
-
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-
+    /* FULL SCREEN LOGIN PAGE */
+    body {
+        background: #FFFFFF;
     }
 
-    h2 {
-
-        color: #8D343C;
-
-        text-align: center;
-
-        margin-bottom: 10px;
-
+    body>header,
+    body>footer {
+        display: none;
     }
 
-    .subtitle {
-
-        text-align: center;
-
-        color: #777777;
-
-        margin-bottom: 25px;
-
-    }
-
-    .form-group {
-
-        margin-bottom: 18px;
-
-    }
-
-    label {
-
-        display: block;
-
-        margin-bottom: 7px;
-
-        font-weight: bold;
-
-    }
-
-    input {
-
+    body>main {
         width: 100%;
-
-        padding: 12px;
-
-        border: 1px solid #cccccc;
-
-        border-radius: 6px;
-
-        font-size: 15px;
-
+        max-width: none;
+        margin: 0;
+        padding: 0;
     }
 
-    input:focus {
-
-        outline: none;
-
-        border-color: #8D343C;
-
-    }
-
-    button {
-
+    .login-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         width: 100%;
+        min-height: 100vh;
+        background: #FFFFFF;
+    }
 
-        padding: 13px;
-
+    /* LEFT SIDE - BRANDING */
+    .login-banner {
         background: #8D343C;
+        color: #FFFFFF;
+        padding: 10%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 
-        color: white;
-
-        border: none;
-
-        border-radius: 6px;
-
-        font-size: 16px;
-
+    .login-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 26px;
         font-weight: bold;
-
-        cursor: pointer;
-
+        margin-bottom: 60px;
     }
 
-    button:hover {
-
-        background: #702830;
-
-    }
-
-    .error {
-
-        color: #c62828;
-
-        font-size: 14px;
-
-        margin-bottom: 15px;
-
-        text-align: center;
-
-    }
-
-    .register-link {
-
-        text-align: center;
-
-        margin-top: 20px;
-
-    }
-
-    .register-link a {
-
+    .brand-icon {
+        background: #FFC900;
         color: #8D343C;
-
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
         font-weight: bold;
+    }
 
+    .login-brand span:last-child {
+        color: #FFC900;
+    }
+
+    .login-banner h1 {
+        color: #FFFFFF;
+        font-size: clamp(52px, 5.2vw, 72px);
+        line-height: 1.15;
+        margin-bottom: 32px;
+        max-width: 700px;
+    }
+
+    .login-banner h1 span {
+        color: #FFC900;
+    }
+
+    .login-banner p {
+        font-size: 23px;
+        line-height: 1.8;
+        color: #F5E7E8;
+        max-width: 600px;
+        margin-bottom: 32px;
+    }
+
+    .login-banner ul {
+        list-style: none;
+        font-size: 21px;
+        line-height: 2.5;
+        color: #F5E7E8;
+    }
+
+    .login-banner li::before {
+        content: "✓ ";
+        color: #FFC900;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+
+    /* RIGHT SIDE - LOGIN PANEL */
+    .login-form-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5%;
+        background: #FFFFFF;
+    }
+
+    /* WELCOME BACK CARD */
+    .login-form-card {
+        width: 100%;
+        max-width: 650px;
+        padding: 65px;
+        border: 1px solid #F0EAEA;
+        border-radius: 20px;
+        background: #FFFFFF;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
+    }
+
+    .login-form-card h2 {
+        color: #30272A;
+        font-size: 46px;
+        line-height: 1.2;
+        margin-bottom: 15px;
+    }
+
+    .login-subtitle {
+        color: #81777A;
+        font-size: 19px;
+        margin-bottom: 40px;
+    }
+
+    /* FORM FIELDS */
+    .login-form-group {
+        margin-bottom: 28px;
+    }
+
+    .login-form-group label {
+        display: block;
+        font-size: 19px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #403638;
+    }
+
+    .login-form-group input {
+        display: block;
+        width: 100%;
+        padding: 18px;
+        border: 1px solid #DCCFD0;
+        border-radius: 9px;
+        font-size: 19px;
+        background: #FFFFFF;
+        color: #30272A;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-form-group input:focus {
+        border-color: #8D343C;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(141, 52, 60, 0.08);
+    }
+
+    /* LOGIN BUTTON */
+    .login-button {
+        display: block;
+        width: 100%;
+        padding: 19px;
+        background: #8D343C;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 9px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .login-button:hover {
+        background: #702830;
+    }
+
+    /* ERROR MESSAGES */
+    .login-error {
+        background: #FCEAEA;
+        color: #9B3030;
+        border: 1px solid #F0C3C3;
+        border-radius: 8px;
+        padding: 13px;
+        font-size: 16px;
+        margin-bottom: 18px;
+    }
+
+    /* REGISTER LINK */
+    .login-register {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 18px;
+        color: #81777A;
+    }
+
+    .login-register a {
+        color: #8D343C;
+        font-weight: bold;
         text-decoration: none;
+    }
 
+    .login-register a:hover {
+        text-decoration: underline;
+    }
+
+    /* TABLET RESPONSIVE */
+    @media (max-width: 1100px) {
+        .login-banner {
+            padding: 8%;
+        }
+
+        .login-banner h1 {
+            font-size: 46px;
+        }
+
+        .login-banner p {
+            font-size: 19px;
+        }
+
+        .login-banner ul {
+            font-size: 17px;
+        }
+
+        .login-form-card {
+            padding: 40px;
+        }
+
+        .login-form-card h2 {
+            font-size: 38px;
+        }
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 800px) {
+        .login-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .login-banner {
+            padding: 45px 8%;
+        }
+
+        .login-brand {
+            margin-bottom: 30px;
+            font-size: 21px;
+        }
+
+        .login-banner h1 {
+            font-size: 38px;
+        }
+
+        .login-banner p {
+            font-size: 17px;
+        }
+
+        .login-banner ul {
+            font-size: 16px;
+        }
+
+        .login-form-section {
+            padding: 40px 6%;
+        }
+
+        .login-form-card {
+            max-width: 650px;
+            padding: 35px;
+        }
+
+        .login-form-card h2 {
+            font-size: 34px;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .login-banner {
+            padding: 35px 25px;
+        }
+
+        .login-banner h1 {
+            font-size: 32px;
+        }
+
+        .login-form-section {
+            padding: 25px 18px;
+        }
+
+        .login-form-card {
+            padding: 28px 22px;
+        }
+
+        .login-form-card h2 {
+            font-size: 30px;
+        }
+
+        .login-form-group label,
+        .login-register {
+            font-size: 16px;
+        }
     }
 </style>
-<div class="login-container">
-    <h2>Welcome Back!</h2>
-    <p class="subtitle">
-
-        Login to your DonationMatch account.
-    </p>
-    <form method="POST">
-
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}
-
-        {% for error in form.non_field_errors %}
-        <div class="error">{{ error }}</div>
-
-        {% endfor %}
-
-        {% endif %}
-        <div class="form-group">
-            <label for="{{ form.username.id_for_label }}">
-
-                Username
-            </label>
-
-            {{ form.username }}
+<div class="login-layout">
+    <!-- LEFT SIDE -->
+    <section class="login-banner">
+        <div class="login-brand">
+            <span class="brand-icon">D</span>
+            <span>DonationMatch</span>
         </div>
-        <div class="form-group">
-            <label for="{{ form.password.id_for_label }}">
-
-                Password
-            </label>
-
-            {{ form.password }}
+        <h1>
+            Give What You Have.<br>
+            <span>Match What They Need.</span>
+        </h1>
+        <p>
+            One place where donors post items and community
+            organizations post requests.
+        </p>
+        <ul>
+            <li>Post donations and requests in one place</li>
+            <li>See possible matches by category</li>
+            <li>No payments. You arrange the handover.</li>
+        </ul>
+    </section>
+    <!-- RIGHT SIDE -->
+    <section class="login-form-section">
+        <div class="login-form-card">
+            <h2>Welcome back</h2>
+            <p class="login-subtitle">
+                Login to your DonationMatch account.
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                <div class="login-error">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <div class="login-form-group">
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+                    {{ form.username }}
+                    {% for error in form.username.errors %}
+                    <div class="login-error">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="login-form-group">
+                    <label for="{{ form.password.id_for_label }}">
+                        Password
+                    </label>
+                    {{ form.password }}
+                    {% for error in form.password.errors %}
+                    <div class="login-error">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="login-button">
+                    Login
+                </button>
+            </form>
+            <p class="login-register">
+                Don't have an account?
+                <a href="{% url 'register' %}">Register</a>
+            </p>
         </div>
-        <button type="submit">Login</button>
-    </form>
-    <p class="register-link">
-
-        Don't have an account?
-        <a href="{% url 'register' %}">Register here</a>
-    </p>
+    </section>
 </div>
-
 {% endblock %}

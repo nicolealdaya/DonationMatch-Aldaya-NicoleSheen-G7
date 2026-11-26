@@ -12,66 +12,203 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            color: #333333;
-            min-height: 100vh;
+        :root {
+            --burgundy: #8D343C;
+            --burgundy-dark: #702830;
+            --yellow: #FFC900;
+            --background: #F8F5F3;
+            --white: #FFFFFF;
+            --text: #30272A;
+            --muted: #71676A;
+            --border: #EDE5E5;
         }
 
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* HEADER */
         header {
-            background-color: #8D343C;
-            padding: 18px 8%;
-            color: white;
+            width: 100%;
+            background: var(--burgundy);
+            padding: 18px 5%;
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-container {
+            max-width: 1350px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .logo {
-            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 23px;
             font-weight: bold;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            background: var(--yellow);
+            color: var(--burgundy);
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 17px;
         }
 
         .logo span {
-            color: #FFC900;
+            color: var(--yellow);
         }
 
+        /* MAIN CONTENT */
         main {
-            width: 90%;
-            max-width: 1100px;
+            width: 92%;
+            max-width: 1250px;
             margin: 40px auto;
+            flex: 1;
         }
 
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        p {
+            line-height: 1.7;
+        }
+
+        a {
+            color: var(--burgundy);
+        }
+
+        /* FORM ELEMENTS */
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #DCCFD0;
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--burgundy);
+            box-shadow: 0 0 0 3px rgba(141, 52, 60, 0.08);
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        /* DJANGO MESSAGES */
         .messages {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .message {
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            background-color: #fff3cd;
-            color: #664d03;
+            padding: 14px 17px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: #FFF5CC;
+            color: #725600;
+            border: 1px solid #F3D978;
+            font-size: 15px;
         }
 
+        .message.success {
+            background: #E8F6EC;
+            color: #27633B;
+            border-color: #B8E1C3;
+        }
+
+        .message.error {
+            background: #FCEAEA;
+            color: #9B3030;
+            border-color: #F0C3C3;
+        }
+
+        /* FOOTER */
         footer {
+            width: 100%;
             text-align: center;
-            padding: 20px;
-            color: #777777;
+            padding: 22px 15px;
+            color: var(--muted);
             font-size: 14px;
+            border-top: 1px solid var(--border);
+            background: var(--white);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            header {
+                padding: 15px 4%;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            main {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            footer {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 
 <body>
     <header>
-        <div class="logo">
-            Donation<span>Match</span>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">D</span>
+                Donation<span>Match</span>
+            </div>
         </div>
     </header>
     <main>
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
-            <div class="message">
+            <div class="message {{ message.tags }}">
                 {{ message }}
             </div>
             {% endfor %}
@@ -81,7 +218,8 @@
         {% endblock %}
     </main>
     <footer>
-        &copy; 2026 DonationMatch. Give What You Have. Match What They Need.
+        &copy; 2026 DonationMatch.
+        Give What You Have. Match What They Need.
     </footer>
 </body>
 

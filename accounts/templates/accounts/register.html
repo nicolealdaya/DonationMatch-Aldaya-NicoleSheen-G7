@@ -2,125 +2,382 @@
 {% block title %}Register | DonationMatch{% endblock %}
 {% block content %}
 <style>
-    .register-container {
-        max-width: 500px;
-        margin: 20px auto;
-        padding: 35px;
-        background: #ffffff;
-        border: 1px solid #eeeeee;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    /* FULL SCREEN REGISTER PAGE */
+    body {
+        background: #FFFFFF;
     }
 
-    h2 {
+    body>header,
+    body>footer {
+        display: none;
+    }
+
+    body>main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .register-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        min-height: 100vh;
+        background: #FFFFFF;
+        overflow: hidden;
+    }
+
+    /* LEFT SIDE - SAME SIZE AS LOGIN */
+    .register-banner {
+        background: #8D343C;
+        color: #FFFFFF;
+        padding: 10%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .register-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 26px;
+        font-weight: bold;
+        margin-bottom: 60px;
+    }
+
+    .brand-icon {
+        background: #FFC900;
         color: #8D343C;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    .subtitle {
-        text-align: center;
-        color: #777777;
-        margin-bottom: 25px;
-    }
-
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 7px;
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
         font-weight: bold;
     }
 
-    input,
-    select {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #cccccc;
-        border-radius: 6px;
-        font-size: 15px;
+    .register-brand span:last-child {
+        color: #FFC900;
     }
 
-    input:focus,
-    select:focus {
-        outline: none;
+    .register-banner h1 {
+        color: #FFFFFF;
+        font-size: clamp(52px, 5.2vw, 72px);
+        line-height: 1.15;
+        margin-bottom: 32px;
+        max-width: 700px;
+    }
+
+    .register-banner h1 span {
+        color: #FFC900;
+    }
+
+    .register-banner p {
+        font-size: 23px;
+        line-height: 1.8;
+        color: #F5E7E8;
+        max-width: 600px;
+        margin-bottom: 32px;
+    }
+
+    .register-banner ul {
+        list-style: none;
+        font-size: 21px;
+        line-height: 2.5;
+        color: #F5E7E8;
+    }
+
+    .register-banner li::before {
+        content: "✓ ";
+        color: #FFC900;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+
+    /* RIGHT SIDE - REGISTER FORM */
+    .register-form-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5%;
+        background: #FFFFFF;
+    }
+
+    .register-form-card {
+        width: 100%;
+        max-width: 650px;
+        padding: 45px;
+        border: 1px solid #F0EAEA;
+        border-radius: 20px;
+        background: #FFFFFF;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
+    }
+
+    .register-form-card h2 {
+        color: #30272A;
+        font-size: 38px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .register-subtitle {
+        color: #81777A;
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    /* FORM FIELDS */
+    .register-form-group {
+        margin-bottom: 20px;
+    }
+
+    .register-form-group label {
+        display: block;
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #403638;
+    }
+
+    .register-form-group input,
+    .register-form-group select,
+    .register-form-group textarea {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #DCCFD0;
+        border-radius: 9px;
+        font-size: 17px;
+        background: #FFFFFF;
+        color: #30272A;
+        font-family: Arial, sans-serif;
+    }
+
+    .register-form-group input:focus,
+    .register-form-group select:focus,
+    .register-form-group textarea:focus {
         border-color: #8D343C;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(141, 52, 60, 0.08);
     }
 
-    button {
+    .register-form-group input[type="radio"],
+    .register-form-group input[type="checkbox"] {
+        display: inline-block;
+        width: auto;
+    }
+
+    .register-help-text {
+        color: #81777A;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-top: 7px;
+    }
+
+    /* ERRORS */
+    .register-error {
+        background: #FCEAEA;
+        color: #9B3030;
+        border: 1px solid #F0C3C3;
+        border-radius: 8px;
+        padding: 11px 13px;
+        font-size: 15px;
+        margin-top: 8px;
+    }
+
+    /* CREATE ACCOUNT BUTTON */
+    .register-button {
+        display: block;
         width: 100%;
-        padding: 13px;
+        padding: 18px;
         background: #8D343C;
-        color: white;
+        color: #FFFFFF;
         border: none;
-        border-radius: 6px;
-        font-size: 16px;
+        border-radius: 9px;
+        font-size: 19px;
         font-weight: bold;
         cursor: pointer;
+        transition: 0.2s;
+        margin-top: 10px;
     }
 
-    button:hover {
+    .register-button:hover {
         background: #702830;
     }
 
-    .login-link {
+    /* LOGIN LINK */
+    .register-login {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 28px;
+        font-size: 17px;
+        color: #81777A;
     }
 
-    .login-link a {
+    .register-login a {
         color: #8D343C;
         font-weight: bold;
         text-decoration: none;
     }
 
-    .error {
-        color: #c62828;
-        font-size: 13px;
-        margin-top: 5px;
+    .register-login a:hover {
+        text-decoration: underline;
     }
 
-    .help-text {
-        color: #777777;
-        font-size: 12px;
-        margin-top: 5px;
+    /* TABLET RESPONSIVE */
+    @media (max-width: 1100px) {
+        .register-banner h1 {
+            font-size: 46px;
+        }
+
+        .register-banner p {
+            font-size: 19px;
+        }
+
+        .register-banner ul {
+            font-size: 17px;
+        }
+
+        .register-form-card {
+            padding: 35px;
+        }
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 800px) {
+        .register-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .register-banner {
+            padding: 45px 8%;
+        }
+
+        .register-brand {
+            margin-bottom: 30px;
+        }
+
+        .register-banner h1 {
+            font-size: 38px;
+        }
+
+        .register-banner p {
+            font-size: 17px;
+        }
+
+        .register-banner ul {
+            font-size: 16px;
+        }
+
+        .register-form-section {
+            padding: 40px 6%;
+        }
+
+        .register-form-card {
+            max-width: 650px;
+            padding: 35px;
+        }
+
+        .register-form-card h2 {
+            font-size: 34px;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .register-banner {
+            padding: 35px 25px;
+        }
+
+        .register-banner h1 {
+            font-size: 32px;
+        }
+
+        .register-form-section {
+            padding: 25px 18px;
+        }
+
+        .register-form-card {
+            padding: 28px 22px;
+        }
+
+        .register-form-card h2 {
+            font-size: 29px;
+        }
+
+        .register-form-group label,
+        .register-login {
+            font-size: 16px;
+        }
     }
 </style>
-<div class="register-container">
-    <h2>Create an Account</h2>
-    <p class="subtitle">
-        Join DonationMatch and make a difference.
-    </p>
-    <form method="POST">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">
-                {{ field.label }}
-            </label>
-            {{ field }}
-            {% if field.help_text %}
-            <div class="help-text">
-                {{ field.help_text }}
-            </div>
-            {% endif %}
-            {% for error in field.errors %}
-            <div class="error">{{ error }}</div>
-            {% endfor %}
+<div class="register-layout">
+    <!-- LEFT SIDE -->
+    <section class="register-banner">
+        <div class="register-brand">
+            <span class="brand-icon">D</span>
+            <span>DonationMatch</span>
         </div>
-        {% endfor %}
-        {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-        <div class="error">{{ error }}</div>
-        {% endfor %}
-        {% endif %}
-        <button type="submit">Create Account</button>
-    </form>
-    <p class="login-link">
-        Already have an account?
-        <a href="{% url 'login' %}">Login here</a>
-    </p>
+        <h1>
+            Join the<br>
+            <span>Community.</span>
+        </h1>
+        <p>
+            Create your DonationMatch account and become part
+            of a community that helps people through donations
+            and shared resources.
+        </p>
+        <ul>
+            <li>Choose your role as a Donor or Organization</li>
+            <li>Share items or post community needs</li>
+            <li>Connect with people who can help</li>
+        </ul>
+    </section>
+    <!-- RIGHT SIDE -->
+    <section class="register-form-section">
+        <div class="register-form-card">
+            <h2>Create an account</h2>
+            <p class="register-subtitle">
+                Register as a Donor or an Organization.
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="register-form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <div class="register-help-text">
+                        {{ field.help_text }}
+                    </div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <div class="register-error">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                <div class="register-error">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <button type="submit" class="register-button">
+                    Create Account
+                </button>
+            </form>
+            <p class="register-login">
+                Already have an account?
+                <a href="{% url 'login' %}">Login</a>
+            </p>
+        </div>
+    </section>
 </div>
 {% endblock %}

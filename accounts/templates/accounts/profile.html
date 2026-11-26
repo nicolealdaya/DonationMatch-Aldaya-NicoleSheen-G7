@@ -2,96 +2,289 @@
 {% block title %}My Profile | DonationMatch{% endblock %}
 {% block content %}
 <style>
-   .profile-container {
-       max-width: 650px;
-       margin: 30px auto;
-       background: white;
-       padding: 30px;
-       border-radius: 12px;
-       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-   }
-   .profile-container h2 {
-       color: #8D343C;
-       margin-bottom: 10px;
-   }
-   .profile-description {
-       color: #666;
-       margin-bottom: 25px;
-   }
-   .profile-form p {
-       margin-bottom: 18px;
-   }
-   .profile-form label {
-       display: block;
-       font-weight: bold;
-       margin-bottom: 7px;
-       color: #333;
-   }
-   .profile-form input {
-       width: 100%;
-       padding: 11px;
-       border: 1px solid #cccccc;
-       border-radius: 6px;
-       box-sizing: border-box;
-   }
-   .errorlist {
-       color: #b00020;
-       font-size: 14px;
-       padding-left: 20px;
-   }
-   .profile-buttons {
-       display: flex;
-       flex-wrap: wrap;
-       gap: 12px;
-       margin-top: 25px;
-   }
-   .profile-buttons button,
-   .profile-buttons a {
-       padding: 12px 20px;
-       border: none;
-       border-radius: 6px;
-       text-decoration: none;
-       font-weight: bold;
-       cursor: pointer;
-   }
-   .save-button {
-       background: #8D343C;
-       color: white;
-   }
-   .back-button {
-       background: #FFC900;
-       color: #333;
-   }
+    /* PROFILE PAGE */
+    .profile-page {
+        width: 100%;
+        max-width: 1100px;
+        margin: 45px auto;
+        padding: 0 20px;
+        color: #30272A;
+        font-size: 18px;
+    }
+
+    /* PROFILE HEADER */
+    .profile-header {
+        background: #8D343C;
+        color: #FFFFFF;
+        padding: 40px 45px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-header h2 {
+        color: #FFC900;
+        font-size: 38px;
+        margin-bottom: 12px;
+    }
+
+    .profile-header p {
+        color: #F5E7E8;
+        font-size: 20px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .profile-label {
+        display: inline-block;
+        background: #FFC900;
+        color: #702830;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* PROFILE CARD */
+    .profile-container {
+        width: 100%;
+        background: #FFFFFF;
+        padding: 40px 45px;
+        border: 1px solid #EDE5E5;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-container h3 {
+        color: #8D343C;
+        font-size: 27px;
+        margin-bottom: 12px;
+    }
+
+    .profile-description {
+        color: #81777A;
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    /* FORM FIELDS */
+    .profile-form p {
+        margin-bottom: 23px;
+    }
+
+    .profile-form label {
+        display: block;
+        font-weight: bold;
+        font-size: 17px;
+        margin-bottom: 10px;
+        color: #403638;
+    }
+
+    .profile-form input,
+    .profile-form select,
+    .profile-form textarea {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #DCCFD0;
+        border-radius: 9px;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        color: #30272A;
+        font-size: 17px;
+        font-family: Arial, sans-serif;
+    }
+
+    .profile-form input:focus,
+    .profile-form select:focus,
+    .profile-form textarea:focus {
+        border-color: #8D343C;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(141, 52, 60, 0.08);
+    }
+
+    .profile-form input:disabled,
+    .profile-form input[readonly] {
+        background: #F5F1F1;
+        color: #71676A;
+        cursor: not-allowed;
+    }
+
+    /* FORM ERRORS */
+    .errorlist {
+        color: #B00020;
+        font-size: 15px;
+        padding-left: 20px;
+        margin-top: 8px;
+    }
+
+    .profile-form .errorlist {
+        margin-bottom: 8px;
+    }
+
+    .profile-form .errorlist li {
+        margin-bottom: 4px;
+    }
+
+    /* BUTTONS */
+    .profile-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .profile-buttons button,
+    .profile-buttons a {
+        display: inline-block;
+        padding: 16px 25px;
+        border: none;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 17px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .save-button {
+        background: #8D343C;
+        color: #FFFFFF;
+    }
+
+    .save-button:hover {
+        background: #702830;
+    }
+
+    .back-button {
+        background: #FFC900;
+        color: #30272A;
+    }
+
+    .back-button:hover {
+        background: #E5B500;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 800px) {
+        .profile-page {
+            margin: 30px auto;
+        }
+
+        .profile-header {
+            padding: 35px;
+        }
+
+        .profile-header h2 {
+            font-size: 32px;
+        }
+
+        .profile-header p {
+            font-size: 18px;
+        }
+
+        .profile-container {
+            padding: 32px;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .profile-page {
+            padding: 0 10px;
+            margin: 20px auto;
+        }
+
+        .profile-header {
+            padding: 25px;
+        }
+
+        .profile-header h2 {
+            font-size: 27px;
+        }
+
+        .profile-header p {
+            font-size: 16px;
+        }
+
+        .profile-container {
+            padding: 22px;
+        }
+
+        .profile-container h3 {
+            font-size: 23px;
+        }
+
+        .profile-description {
+            font-size: 16px;
+        }
+
+        .profile-form label {
+            font-size: 16px;
+        }
+
+        .profile-form input,
+        .profile-form select,
+        .profile-form textarea {
+            font-size: 16px;
+        }
+
+        .profile-buttons {
+            flex-direction: column;
+        }
+
+        .profile-buttons button,
+        .profile-buttons a {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
 </style>
-<div class="profile-container">
-<h2>My Profile</h2>
-<p class="profile-description">
-       View and update your personal account information.
-</p>
-<form method="POST" class="profile-form">
-       {% csrf_token %}
-       {{ form.non_field_errors }}
-       {% for field in form %}
-<p>
-               {{ field.label_tag }}
-               {{ field }}
-               {{ field.errors }}
-</p>
-       {% endfor %}
-<div class="profile-buttons">
-<button type="submit" class="save-button">
-               Save Changes
-</button>
-           {% if request.user.role == "donor" %}
-<a href="{% url 'donor_dashboard' %}" class="back-button">
-                   Back to Dashboard
-</a>
-           {% else %}
-<a href="{% url 'organization_dashboard' %}" class="back-button">
-                   Back to Dashboard
-</a>
-           {% endif %}
-</div>
-</form>
+<div class="profile-page">
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <span class="profile-label">
+            DONATIONMATCH ACCOUNT
+        </span>
+        <h2>My Profile</h2>
+        <p>
+            View and update your personal account information.
+        </p>
+    </div>
+    <!-- PROFILE FORM -->
+    <div class="profile-container">
+        <h3>Account Information</h3>
+        <p class="profile-description">
+            Keep your account details updated and accurate.
+        </p>
+        <form method="POST" class="profile-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+                {{ field.errors }}
+            </p>
+            {% endfor %}
+            <!-- PROFILE BUTTONS -->
+            <div class="profile-buttons">
+                <button type="submit" class="save-button">
+                    Save Changes
+                </button>
+                {% if request.user.role == "donor" %}
+                <a href="{% url 'donor_dashboard' %}" class="back-button">
+                    Back to Dashboard
+                </a>
+                {% else %}
+                <a href="{% url 'organization_dashboard' %}" class="back-button">
+                    Back to Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -2,52 +2,135 @@
 {% block title %}Organization Dashboard | DonationMatch{% endblock %}
 {% block content %}
 <style>
+    /* DASHBOARD CONTAINER */
+    .organization-dashboard {
+        width: 100%;
+        max-width: 1250px;
+        margin: 35px auto;
+        padding: 0 15px;
+        color: #30272A;
+        font-size: 18px;
+    }
+
+    /* WELCOME HEADER */
     .dashboard-header {
         background: #8D343C;
-        color: white;
-        padding: 30px;
-        border-radius: 12px;
-        margin-bottom: 25px;
+        color: #FFFFFF;
+        padding: 45px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     }
 
     .dashboard-header h2 {
         color: #FFC900;
-        margin-bottom: 10px;
+        font-size: 38px;
+        line-height: 1.3;
+        margin-bottom: 15px;
     }
 
-    .dashboard-card {
-        background: white;
-        border: 1px solid #eeeeee;
-        border-radius: 10px;
-        padding: 25px;
+    .dashboard-header p {
+        color: #F5E7E8;
+        font-size: 20px;
+        line-height: 1.7;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-label {
+        display: inline-block;
+        background: #FFC900;
+        color: #702830;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: bold;
         margin-bottom: 20px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* DASHBOARD CARDS */
+    .dashboard-card {
+        background: #FFFFFF;
+        border: 1px solid #EDE5E5;
+        border-radius: 14px;
+        padding: 35px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
     .dashboard-card h3 {
         color: #8D343C;
-        margin-bottom: 10px;
+        font-size: 27px;
+        margin-bottom: 22px;
     }
 
+    .dashboard-card p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #51474A;
+        margin-bottom: 12px;
+    }
+
+    .dashboard-card strong {
+        color: #30272A;
+    }
+
+    .dashboard-divider {
+        border: none;
+        border-top: 1px solid #EDE5E5;
+        margin: 18px 0;
+    }
+
+    /* ORGANIZATION INFORMATION */
+    .organization-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .info-item {
+        background: #FAF7F7;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #F0EAEA;
+    }
+
+    .info-item label {
+        display: block;
+        color: #81777A;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .info-item p {
+        color: #30272A;
+        font-size: 19px;
+        font-weight: bold;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    /* ACTION BUTTONS */
     .dashboard-links {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 20px;
+        gap: 15px;
+        margin-top: 25px;
     }
 
     .dashboard-links a,
     .dashboard-links button {
         display: inline-block;
         background: #8D343C;
-        color: white;
-        padding: 12px 18px;
-        border-radius: 6px;
+        color: #FFFFFF;
+        padding: 16px 25px;
+        border-radius: 9px;
         text-decoration: none;
         font-weight: bold;
         border: none;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 17px;
+        transition: 0.2s;
     }
 
     .dashboard-links a:hover,
@@ -55,14 +138,77 @@
         background: #702830;
     }
 
-    .logout-button {
-        background: #FFC900 !important;
-        color: #333333 !important;
+    .dashboard-links .logout-button {
+        background: #FFC900;
+        color: #30272A;
     }
 
-    @media (max-width: 600px) {
+    .dashboard-links .logout-button:hover {
+        background: #E5B500;
+    }
+
+    .dashboard-links form {
+        margin: 0;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 800px) {
+        .organization-dashboard {
+            margin: 25px auto;
+        }
+
         .dashboard-header {
+            padding: 35px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 32px;
+        }
+
+        .dashboard-header p {
+            font-size: 18px;
+        }
+
+        .dashboard-card {
+            padding: 28px;
+        }
+
+        .organization-info {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .organization-dashboard {
+            padding: 0 10px;
+        }
+
+        .dashboard-header {
+            padding: 25px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 27px;
+        }
+
+        .dashboard-header p {
+            font-size: 16px;
+        }
+
+        .dashboard-card {
             padding: 22px;
+        }
+
+        .dashboard-card h3 {
+            font-size: 23px;
+        }
+
+        .dashboard-card p {
+            font-size: 16px;
+        }
+
+        .info-item p {
+            font-size: 17px;
         }
 
         .dashboard-links {
@@ -71,49 +217,78 @@
 
         .dashboard-links a,
         .dashboard-links button {
+            display: block;
+            width: 100%;
             text-align: center;
         }
     }
 </style>
-<div class="dashboard-header">
-    <h2>Welcome, {{ request.user.full_name }}!</h2>
-    <p>Organization Dashboard</p>
-    <p>Thank you for helping communities receive the support they need.</p>
-</div>
-<div class="dashboard-card">
-    <h3>Organization Information</h3>
-    <p>
-        <strong>Organization Name:</strong>
-        {{ request.user.organization.organization_name }}
-    </p>
-    <p>
-        <strong>Contact Person:</strong>
-        {{ request.user.full_name }}
-    </p>
-    <p>
-        <strong>Username:</strong>
-        {{ request.user.username }}
-    </p>
-    <p>
-        <strong>Email:</strong>
-        {{ request.user.email }}
-    </p>
-    <p>
-        <strong>Role:</strong> Organization
-    </p>
-</div>
-<div class="dashboard-card">
-    <h3>What You Can Do</h3>
-    <p>
-        Manage your organization account and connect with generous donors
-        through DonationMatch.
-    </p>
-    <div class="dashboard-links">
-        <a href="{% url 'profile' %}">My Profile</a>
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="logout-button">Logout</button>
-        </form>
+<div class="organization-dashboard">
+    <!-- WELCOME HEADER -->
+    <div class="dashboard-header">
+        <span class="dashboard-label">
+            ORGANIZATION ACCOUNT
+        </span>
+        <h2>
+            Welcome, {{ request.user.full_name }}!
+        </h2>
+        <p>Organization Dashboard</p>
+        <p>
+            Thank you for helping communities receive the support they need.
+        </p>
+    </div>
+    <!-- ORGANIZATION INFORMATION -->
+    <div class="dashboard-card">
+        <h3>Organization Information</h3>
+        <div class="organization-info">
+            <div class="info-item">
+                <label>Organization Name</label>
+                <p>
+                    {{ request.user.organization.organization_name }}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Contact Person</label>
+                <p>
+                    {{ request.user.full_name }}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Username</label>
+                <p>
+                    {{ request.user.username }}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Email Address</label>
+                <p>
+                    {{ request.user.email }}
+                </p>
+            </div>
+            <div class="info-item">
+                <label>Account Role</label>
+                <p>Organization</p>
+            </div>
+        </div>
+    </div>
+    <!-- DASHBOARD ACTIONS -->
+    <div class="dashboard-card">
+        <h3>What You Can Do</h3>
+        <p>
+            Manage your organization account and connect with generous donors
+            through DonationMatch.
+        </p>
+        <div class="dashboard-links">
+            <a href="{% url 'profile' %}">
+                My Profile
+            </a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">
+                    Logout
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
