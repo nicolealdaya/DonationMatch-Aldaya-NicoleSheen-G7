@@ -9,7 +9,7 @@ from .forms import (
    DonationForm,
    RequestForm,
 )
-from .models import Organization
+from .models import Organization, Donation, Request
 
 def register_view(request):
    if request.method == "POST":
@@ -35,9 +35,7 @@ def login_view(request):
        if form.is_valid():
            user = form.get_user()
            login(request, user)
-           if user.role == "donor":
-               return redirect("donor_dashboard")
-           return redirect("organization_dashboard")
+           return redirect("dashboard")
    else:
        form = AuthenticationForm()
    return render(
@@ -47,22 +45,37 @@ def login_view(request):
    )
 
 @login_required
-def donor_dashboard(request):
-   if request.user.role != "donor":
-       return redirect("organization_dashboard")
+def dashboard_view(request):
+   organization = None
+   donations = None
+   requests = None
+   if request.user.role == "donor":
+       donations = Donation.objects.filter(user=request.user)
+   elif request.user.role == "organization":
+       try:
+           organization = request.user.organization
+           requests = Request.objects.filter(
+               organization=organization
+           )
+       except Organization.DoesNotExist:
+           pass
    return render(
        request,
-       "accounts/donor_dashboard.html"
+       "accounts/dashboard.html",
+       {
+           "organization": organization,
+           "donations": donations,
+           "requests": requests,
+       }
    )
 
 @login_required
+def donor_dashboard(request):
+   return redirect("dashboard")
+
+@login_required
 def organization_dashboard(request):
-   if request.user.role != "organization":
-       return redirect("donor_dashboard")
-   return render(
-       request,
-       "accounts/organization_dashboard.html"
-   )
+   return redirect("dashboard")
 
 @login_required
 def create_post_view(request):
@@ -88,15 +101,13 @@ def create_post_view(request):
                        request,
                        "Your organization profile could not be found."
                    )
-                   return redirect("organization_dashboard")
+                   return redirect("dashboard")
            post.save()
            messages.success(
                request,
                f"Your {post_type.lower()} post has been created successfully."
            )
-           if request.user.role == "donor":
-               return redirect("donor_dashboard")
-           return redirect("organization_dashboard")
+           return redirect("dashboard")
    else:
        form = form_class()
    return render(
