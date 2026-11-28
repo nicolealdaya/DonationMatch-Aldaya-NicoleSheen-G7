@@ -3,13 +3,14 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from .forms import (
    UserRegistrationForm,
    ProfileUpdateForm,
    DonationForm,
    RequestForm,
 )
-from .models import Organization
+from .models import Organization, Category, Donation, Request
 
 def register_view(request):
    if request.method == "POST":
@@ -105,6 +106,42 @@ def create_post_view(request):
        {
            "form": form,
            "post_type": post_type,
+       }
+   )
+
+@login_required
+def explore_view(request):
+   search_query = request.GET.get("search", "").strip()
+   category_id = request.GET.get("category", "")
+   donations = Donation.objects.filter(
+       status="Active"
+   ).select_related("user", "category")
+   requests = Request.objects.filter(
+       status="Active"
+   ).select_related("organization__user", "category")
+   if search_query:
+       donations = donations.filter(
+           Q(item_name__icontains=search_query) |
+           Q(description__icontains=search_query)
+       )
+       requests = requests.filter(
+           Q(item_name__icontains=search_query) |
+           Q(description__icontains=search_query)
+       )
+   if category_id:
+       donations = donations.filter(category_id=category_id)
+       requests = requests.filter(category_id=category_id)
+   donations = donations.order_by("-date_posted")
+   requests = requests.order_by("-date_posted")
+   return render(
+       request,
+       "accounts/explore.html",
+       {
+           "donations": donations,
+           "requests": requests,
+           "categories": Category.objects.all(),
+           "search_query": search_query,
+           "selected_category": category_id,
        }
    )
 
