@@ -1,0 +1,247 @@
+{% extends "accounts/base.html" %}
+{% block title %}My Posts | DonationMatch{% endblock %}
+{% block content %}
+<style>
+    .posts-container {
+        max-width: 1100px;
+        margin: 20px auto;
+    }
+
+    .posts-header {
+        background: linear-gradient(120deg, #702830, #8D343C);
+        color: white;
+        padding: 35px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+    }
+
+    .posts-header h1 {
+        color: #FFC900;
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    .posts-header p {
+        color: white;
+    }
+
+    .section-title {
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    .posts-section {
+        margin-bottom: 35px;
+    }
+
+    .post-card {
+        background: white;
+        border: 1px solid #EDE5E5;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 18px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .post-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .post-card h3 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .category {
+        color: #8D343C;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .status {
+        background: #E8F6EC;
+        color: #27633B;
+        padding: 5px 13px;
+        border-radius: 20px;
+        font-size: 13px;
+        height: fit-content;
+    }
+
+    .inactive {
+        background: #FCEAEA;
+        color: #9B3030;
+    }
+
+    .post-description {
+        color: #71676A;
+        margin: 12px 0;
+    }
+
+    .post-details {
+        font-size: 14px;
+        color: #71676A;
+        margin-bottom: 18px;
+    }
+
+    .edit-form {
+        border-top: 1px solid #EDE5E5;
+        padding-top: 20px;
+        margin-top: 15px;
+    }
+
+    .edit-form label {
+        display: block;
+        font-weight: bold;
+        margin: 12px 0 6px;
+    }
+
+    .edit-form input,
+    .edit-form select,
+    .edit-form textarea {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #EAD7DA;
+        border-radius: 7px;
+        font: inherit;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 7px;
+        padding: 11px 20px;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #8D343C;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        border: 1px solid #8D343C;
+        color: #8D343C;
+    }
+
+    .btn-danger {
+        background: #FCEAEA;
+        color: #9B3030;
+    }
+
+    .empty-state {
+        background: white;
+        border: 1px dashed #DCCFD0;
+        border-radius: 12px;
+        padding: 35px;
+        text-align: center;
+        color: #71676A;
+    }
+
+    .empty-state a {
+        display: inline-block;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 600px) {
+        .posts-header {
+            padding: 25px;
+        }
+
+        .posts-header h1 {
+            font-size: 25px;
+        }
+
+        .post-top {
+            flex-direction: column;
+        }
+    }
+</style>
+<div class="posts-container">
+    <div class="posts-header">
+        <h1>My Posts</h1>
+        <p>Manage your donation posts and requests in one place.</p>
+    </div> {% if user.role == "donor" %} <section class="posts-section">
+        <h2 class="section-title">My Donation Posts</h2> {% for post in donations %} <div class="post-card">
+            <div class="post-top">
+                <div>
+                    <h3>{{ post.item_name }}</h3> <span class="category">{{ post.category.name }}</span>
+                </div> <span class="status {% if post.status == 'Inactive' %}inactive{% endif %}"> {{ post.status }}
+                </span>
+            </div>
+            <p class="post-description">{{ post.description }}</p>
+            <p class="post-details"> Quantity: {{ post.quantity }} | Posted: {{ post.date_posted|date:"M d, Y" }} </p>
+            <details>
+                <summary>Edit Donation</summary>
+                <form method="POST" action="{% url 'edit_post' 'donation' post.id %}" class="edit-form"> {% csrf_token %} <label>Item Name</label> <input type="text" name="item_name" value="{{ post.item_name }}"
+                        required> <label>Category</label> <select name="category" required>{% for category in categories %}<option value="{{ category.id }}" {% if category.id == post.category.id %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select> <label>Description</label>
+                    <textarea name="description" rows="4" required>{{ post.description }}</textarea>
+                    <label>Quantity</label> <input type="number" name="quantity" min="1" value="{{ post.quantity }}"
+                        required> <label>Status</label> <select name="status">
+                        <option value="Active" {% if post.status == "Active" %}selected{% endif %}>Active</option>
+                        <option value="Inactive" {% if post.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                    </select>
+                    <div class="post-actions"> <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </details>
+            <div class="post-actions">
+                <form method="POST" action="{% url 'delete_post' 'donation' post.id %}"
+                    onsubmit="return confirm('Are you sure you want to delete this donation?');"> {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div> {% empty %} <div class="empty-state">
+            <p>You haven't created any donation posts yet.</p> <a href="{% url 'create_post' %}"
+                class="btn btn-primary">Create Donation</a>
+        </div> {% endfor %}
+    </section> {% endif %} {% if user.role == "organization" %} <section class="posts-section">
+        <h2 class="section-title">My Request Posts</h2> {% for post in requests %} <div class="post-card">
+            <div class="post-top">
+                <div>
+                    <h3>{{ post.item_name }}</h3> <span class="category">{{ post.category.name }}</span>
+                </div> <span class="status {% if post.status == 'Inactive' %}inactive{% endif %}"> {{ post.status }}
+                </span>
+            </div>
+            <p class="post-description">{{ post.description }}</p>
+            <p class="post-details"> Quantity: {{ post.quantity }} | Posted: {{ post.date_posted|date:"M d, Y" }} </p>
+            <details>
+                <summary>Edit Request</summary>
+                <form method="POST" action="{% url 'edit_post' 'request' post.id %}" class="edit-form"> {% csrf_token %}
+                    <label>Item Name</label> <input type="text" name="item_name" value="{{ post.item_name }}" required>
+                    <label>Category</label> <select name="category" required>{% for category in categories %}<option value="{{ category.id }}" {% if category.id == post.category.id %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select> <label>Description</label> <textarea
+                        name="description" rows="4" required>{{ post.description }}</textarea> <label>Quantity</label>
+                    <input type="number" name="quantity" min="1" value="{{ post.quantity }}" required>
+                    <label>Status</label> <select name="status">
+                        <option value="Active" {% if post.status == "Active" %}selected{% endif %}>Active</option>
+                        <option value="Inactive" {% if post.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                    </select>
+                    <div class="post-actions"> <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </details>
+            <div class="post-actions">
+                <form method="POST" action="{% url 'delete_post' 'request' post.id %}"
+                    onsubmit="return confirm('Are you sure you want to delete this request?');"> {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div> {% empty %} <div class="empty-state">
+            <p>You haven't created any request posts yet.</p> <a href="{% url 'create_post' %}"
+                class="btn btn-primary">Create Request</a>
+        </div> {% endfor %}
+    </section> {% endif %} <a href="{% url 'explore' %}" class="btn btn-secondary">Back to Explore</a>
+</div>
+{% endblock %}
