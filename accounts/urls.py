@@ -20,13 +20,28 @@ urlpatterns = [
        name="create_post"
    ),
    path(
+       "posts/mine/",
+       views.my_posts_view,
+       name="my_posts"
+   ),
+   path(
+       "posts/<str:post_type>/<int:post_id>/edit/",
+       views.edit_post_view,
+       name="edit_post"
+   ),
+   path(
+       "posts/<str:post_type>/<int:post_id>/delete/",
+       views.delete_post_view,
+       name="delete_post"
+   ),
+   path(
+       "explore/",
+       views.explore_view,
+       name="explore"
+   ),
+   path(
        "profile/",
        views.profile_view,
        name="profile"
    ),
-   path(
-   "explore/",
-   views.explore_view,
-   name="explore"
-),
 ]
