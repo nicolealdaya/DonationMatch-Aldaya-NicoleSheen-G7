@@ -149,6 +149,7 @@ def my_posts_view(request):
        {
            "donations": donations,
            "requests": requests,
+           "categories": Category.objects.all(),
        }
    )
 
