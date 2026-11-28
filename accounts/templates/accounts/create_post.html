@@ -1,0 +1,243 @@
+{% extends "accounts/base.html" %}
+{% block title %}Create {{ post_type }} | DonationMatch{% endblock %}
+{% block content %}
+<style>
+    .create-post-page {
+        max-width: 1050px;
+        margin: 35px auto;
+        padding: 0 15px;
+        color: #30272A;
+    }
+
+    .create-post-banner {
+        padding: 35px 40px;
+        margin-bottom: 25px;
+        border-radius: 16px;
+        background: linear-gradient(120deg, #8D343C, #C65B68);
+        color: #FFFFFF;
+        box-shadow: 0 5px 15px rgba(112, 40, 48, 0.12);
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 18px;
+        color: #FFFFFF;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .back-button:hover {
+        color: #FFC900;
+    }
+
+    .create-post-banner .badge {
+        display: inline-block;
+        padding: 7px 15px;
+        margin-bottom: 14px;
+        border-radius: 20px;
+        background: #FFC900;
+        color: #702830;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .create-post-banner h1 {
+        margin: 0 0 10px;
+        color: #FFC900;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .create-post-banner p {
+        margin: 0;
+        color: #FFFFFF;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .create-post-card {
+        padding: 32px;
+        margin-bottom: 25px;
+        border: 1px solid #EDE5E5;
+        border-radius: 16px;
+        background: #FFFFFF;
+        box-shadow: 0 3px 12px rgba(48, 39, 42, 0.04);
+    }
+
+    .create-post-card h2 {
+        margin: 0 0 8px;
+        color: #8D343C;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .form-description {
+        margin: 0 0 25px;
+        color: #71676A;
+        font-size: 14px;
+    }
+
+    .create-post-form p {
+        margin-bottom: 22px;
+    }
+
+    .create-post-form label {
+        display: block;
+        margin-bottom: 9px;
+        color: #30272A;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .create-post-form input,
+    .create-post-form select,
+    .create-post-form textarea {
+        display: block;
+        width: 100%;
+        padding: 13px 15px;
+        border: 1px solid #EDE5E5;
+        border-radius: 9px;
+        background: #FFFFFF;
+        color: #30272A;
+        font-family: inherit;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .create-post-form input:focus,
+    .create-post-form select:focus,
+    .create-post-form textarea:focus {
+        outline: none;
+        border-color: #8D343C;
+        box-shadow: 0 0 0 3px rgba(141, 52, 60, 0.10);
+    }
+
+    .create-post-form textarea {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .create-post-form .helptext {
+        display: block;
+        margin-top: 6px;
+        color: #71676A;
+        font-size: 12px;
+    }
+
+    .create-post-form .errorlist {
+        margin: 7px 0 0;
+        padding: 0;
+        color: #B42318;
+        font-size: 13px;
+        list-style: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 22px;
+        border-top: 1px solid #EDE5E5;
+    }
+
+    .submit-button,
+    .cancel-button {
+        display: inline-block;
+        padding: 13px 24px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .submit-button {
+        border: 1px solid #8D343C;
+        background: #8D343C;
+        color: #FFFFFF;
+    }
+
+    .submit-button:hover {
+        background: #702830;
+        border-color: #702830;
+    }
+
+    .cancel-button {
+        border: 1px solid #E1C8CC;
+        background: #FFFFFF;
+        color: #8D343C;
+    }
+
+    .cancel-button:hover {
+        background: #F8F0F1;
+    }
+
+    @media (max-width: 600px) {
+        .create-post-page {
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        .create-post-banner {
+            padding: 25px 22px;
+        }
+
+        .create-post-banner h1 {
+            font-size: 24px;
+        }
+
+        .create-post-card {
+            padding: 23px 18px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+<div class="create-post-page">
+    <section class="create-post-banner">
+        <a href="{% if request.user.role == 'donor' %}{% url 'donor_dashboard' %}{% else %}{% url 'organization_dashboard' %}{% endif %}"
+            class="back-button">
+            ← Back to Dashboard
+        </a>
+        <br>
+        <span class="badge">{{ post_type }} Account</span>
+        <h1>Create {{ post_type }}</h1>
+        <p>
+            {% if post_type == "Donation" %}
+            Share your generosity by posting items you want to donate to communities in need.
+            {% else %}
+            Tell donors what your organization needs so they can help your community.
+            {% endif %}
+        </p>
+    </section>
+    <section class="create-post-card">
+        <h2>{{ post_type }} Information</h2>
+        <p class="form-description">
+            Please complete the information below.
+        </p>
+        <form method="POST" class="create-post-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit" class="submit-button">
+                    Create {{ post_type }}
+                </button>
+                <a href="{% if request.user.role == 'donor' %}{% url 'donor_dashboard' %}{% else %}{% url 'organization_dashboard' %}{% endif %}"
+                    class="cancel-button">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
