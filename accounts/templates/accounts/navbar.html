@@ -1,0 +1,214 @@
+<style>
+    .main-navbar {
+        width: 100%;
+        background: #8D343C;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .navbar-container {
+        max-width: 1350px;
+        min-height: 75px;
+        margin: auto;
+        padding: 0 5%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #FFFFFF;
+        font-size: 23px;
+        font-weight: bold;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .navbar-logo:hover {
+        color: #FFFFFF;
+    }
+
+    .navbar-logo span:last-child {
+        color: #F5C542;
+    }
+
+    .navbar-logo-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        background: #F5C542;
+        color: #8D343C;
+        font-size: 18px;
+    }
+
+    .navbar-links {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .navbar-links a,
+    .navbar-logout-button {
+        position: relative;
+        padding: 27px 0;
+        color: #FFFFFF;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 0.2s;
+    }
+
+    .navbar-links a:hover,
+    .navbar-links a.active,
+    .navbar-logout-button:hover {
+        color: #F5C542;
+    }
+
+    .navbar-links a.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 17px;
+        height: 3px;
+        border-radius: 5px;
+        background: #F5C542;
+    }
+
+    .navbar-logout-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .navbar-logout-button {
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .navbar-toggle {
+        display: none;
+        padding: 7px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 6px;
+        background: transparent;
+        color: #FFFFFF;
+        font-size: 25px;
+        line-height: 1;
+    }
+
+    @media (max-width: 900px) {
+        .navbar-container {
+            position: relative;
+            min-height: 68px;
+            padding: 0 4%;
+        }
+
+        .navbar-toggle {
+            display: block;
+        }
+
+        .navbar-links {
+            display: none;
+            position: absolute;
+            top: 68px;
+            left: 0;
+            right: 0;
+            padding: 12px 4% 20px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0;
+            background: #8D343C;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .navbar-links.show {
+            display: flex;
+        }
+
+        .navbar-links a,
+        .navbar-logout-button {
+            display: block;
+            width: 100%;
+            padding: 13px 5px;
+            text-align: left;
+        }
+
+        .navbar-links a.active::after {
+            left: 5px;
+            right: auto;
+            bottom: 5px;
+            width: 35px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .navbar-logo {
+            font-size: 20px;
+        }
+    }
+</style>
+<nav class="main-navbar">
+    <div class="navbar-container">
+        <a href="{% url 'dashboard' %}" class="navbar-logo">
+            <span class="navbar-logo-icon">D</span>
+            Donation<span>Match</span>
+        </a>
+        <button type="button" class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation"
+            aria-expanded="false">
+            ☰
+        </button>
+        <div class="navbar-links" id="navbarLinks">
+            <a href="{% url 'dashboard' %}"
+                class="{% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'donor_dashboard' or request.resolver_match.url_name == 'organization_dashboard' %}active{% endif %}">
+                Dashboard
+            </a>
+            <a href="{% url 'explore' %}"
+                class="{% if request.resolver_match.url_name == 'explore' %}active{% endif %}">
+                Explore
+            </a>
+            <a href="{% url 'create_post' %}"
+                class="{% if request.resolver_match.url_name == 'create_post' %}active{% endif %}">
+                Create Post
+            </a>
+            <a href="{% url 'my_posts' %}"
+                class="{% if request.resolver_match.url_name == 'my_posts' or request.resolver_match.url_name == 'edit_post' or request.resolver_match.url_name == 'delete_post' %}active{% endif %}">
+                My Posts
+            </a>
+            <a href="{% url 'profile' %}"
+                class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                Profile
+            </a>
+            <form method="POST" action="{% url 'logout' %}" class="navbar-logout-form">
+                {% csrf_token %}
+                <button type="submit" class="navbar-logout-button">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("navbarToggle");
+        const links = document.getElementById("navbarLinks");
+        if (toggle && links) {
+            toggle.addEventListener("click", function () {
+                const isOpen = links.classList.toggle("show");
+                toggle.setAttribute("aria-expanded", isOpen);
+                toggle.textContent = isOpen ? "×" : "☰";
+            });
+        }
+    });
+</script>
