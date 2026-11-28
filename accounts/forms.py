@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Organization
+from .models import User, Organization, Donation, Request
 
 class UserRegistrationForm(UserCreationForm):
    organization_name = forms.CharField(
@@ -66,3 +66,45 @@ class ProfileUpdateForm(forms.ModelForm):
                "This email address is already registered."
            )
        return email
+
+class DonationForm(forms.ModelForm):
+   class Meta:
+       model = Donation
+       fields = [
+           "item_name",
+           "category",
+           "description",
+           "quantity",
+       ]
+       widgets = {
+           "description": forms.Textarea(attrs={"rows": 4}),
+           "quantity": forms.NumberInput(attrs={"min": 1}),
+       }
+   def clean_quantity(self):
+       quantity = self.cleaned_data["quantity"]
+       if quantity < 1:
+           raise forms.ValidationError(
+               "Quantity must be at least 1."
+           )
+       return quantity
+
+class RequestForm(forms.ModelForm):
+   class Meta:
+       model = Request
+       fields = [
+           "item_name",
+           "category",
+           "description",
+           "quantity",
+       ]
+       widgets = {
+           "description": forms.Textarea(attrs={"rows": 4}),
+           "quantity": forms.NumberInput(attrs={"min": 1}),
+       }
+   def clean_quantity(self):
+       quantity = self.cleaned_data["quantity"]
+       if quantity < 1:
+           raise forms.ValidationError(
+               "Quantity must be at least 1."
+           )
+       return quantity
