@@ -4,7 +4,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.db.models import Q
+from django.db.models import Q, Count
+from itertools import product
 from .forms import (
    UserRegistrationForm,
    ProfileUpdateForm,
@@ -43,6 +44,7 @@ def dashboard_view(request):
    organization = None
    donations = None
    requests = None
+   own_requests = None
    if request.user.role == "donor":
        donations = Donation.objects.filter(user=request.user)
    elif request.user.role == "organization":
@@ -51,8 +53,138 @@ def dashboard_view(request):
            requests = Request.objects.filter(
                organization=organization
            )
+           own_requests = requests.select_related(
+               "category"
+           ).order_by("-date_posted")[:3]
        except Organization.DoesNotExist:
            pass
+   total_donations = Donation.objects.count()
+   total_requests = Request.objects.count()
+   donation_categories = list(
+       Category.objects.annotate(
+           total=Count("donations")
+       ).order_by("-total", "name")
+   )
+   request_categories = list(
+       Category.objects.annotate(
+           total=Count("requests")
+       ).order_by("-total", "name")
+   )
+   max_donations = max(
+       (category.total for category in donation_categories),
+       default=0
+   )
+   max_requests = max(
+       (category.total for category in request_categories),
+       default=0
+   )
+   donation_category_data = [
+       {
+           "name": category.name,
+           "count": category.total,
+           "percentage": (
+               category.total / max_donations * 100
+               if max_donations else 0
+           ),
+       }
+       for category in donation_categories
+   ]
+   request_category_data = [
+       {
+           "name": category.name,
+           "count": category.total,
+           "percentage": (
+               category.total / max_requests * 100
+               if max_requests else 0
+           ),
+       }
+       for category in request_categories
+   ]
+   active_donations = list(
+       Donation.objects.filter(
+           status="Active"
+       ).select_related(
+           "category"
+       ).order_by("-date_posted")
+   )
+   active_requests = list(
+       Request.objects.filter(
+           status="Active"
+       ).select_related(
+           "category"
+       ).order_by("-date_posted")
+   )
+   donations_by_category = {}
+   requests_by_category = {}
+   for donation in active_donations:
+       donations_by_category.setdefault(
+           donation.category_id, []
+       ).append(donation)
+   for donation_request in active_requests:
+       requests_by_category.setdefault(
+           donation_request.category_id, []
+       ).append(donation_request)
+   possible_match_count = 0
+   possible_matches = []
+   for category_id, category_donations in donations_by_category.items():
+       category_requests = requests_by_category.get(category_id, [])
+       possible_match_count += (
+           len(category_donations) * len(category_requests)
+       )
+       for donation, donation_request in product(
+           category_donations,
+           category_requests
+       ):
+           match_date = max(
+               donation.date_posted,
+               donation_request.date_posted
+           )
+           possible_matches.append({
+               "donation": donation,
+               "request": donation_request,
+               "category": donation.category.name,
+               "match_date": match_date,
+           })
+   possible_matches.sort(
+       key=lambda match: match["match_date"],
+       reverse=True
+   )
+   possible_matches = possible_matches[:3]
+   full_name = (
+       getattr(request.user, "full_name", "")
+       or request.user.get_username()
+   )
+   first_name = (
+       getattr(request.user, "first_name", "")
+       or full_name.split()[0]
+   )
+   name_parts = full_name.split()
+   initials = "".join(
+       part[0].upper() for part in name_parts[:2]
+   ) or request.user.get_username()[:2].upper()
+   most_donated = (
+       donation_category_data[0]["name"]
+       if donation_category_data and donation_category_data[0]["count"] > 0
+       else "None yet"
+   )
+   most_requested = (
+       request_category_data[0]["name"]
+       if request_category_data and request_category_data[0]["count"] > 0
+       else "None yet"
+   )
+   analytics = {
+       "total_donations": total_donations,
+       "total_requests": total_requests,
+       "possible_match_count": possible_match_count,
+       "donation_categories": donation_category_data,
+       "request_categories": request_category_data,
+       "most_donated": most_donated,
+       "most_requested": most_requested,
+       "possible_matches": possible_matches,
+       "first_name": first_name,
+       "full_name": full_name,
+       "initials": initials,
+   }
    return render(
        request,
        "accounts/dashboard.html",
@@ -60,6 +192,8 @@ def dashboard_view(request):
            "organization": organization,
            "donations": donations,
            "requests": requests,
+           "own_requests": own_requests,
+           "analytics": analytics,
        }
    )
 
