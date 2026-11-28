@@ -15,6 +15,11 @@ urlpatterns = [
        name="organization_dashboard"
    ),
    path(
+       "posts/create/",
+       views.create_post_view,
+       name="create_post"
+   ),
+   path(
        "profile/",
        views.profile_view,
        name="profile"
