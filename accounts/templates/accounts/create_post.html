@@ -205,8 +205,7 @@
 </style>
 <div class="create-post-page">
     <section class="create-post-banner">
-        <a href="{% if request.user.role == 'donor' %}{% url 'donor_dashboard' %}{% else %}{% url 'organization_dashboard' %}{% endif %}"
-            class="back-button">
+        <a href="{% url 'dashboard' %}" class="back-button">
             ← Back to Dashboard
         </a>
         <br>
@@ -232,8 +231,7 @@
                 <button type="submit" class="submit-button">
                     Create {{ post_type }}
                 </button>
-                <a href="{% if request.user.role == 'donor' %}{% url 'donor_dashboard' %}{% else %}{% url 'organization_dashboard' %}{% endif %}"
-                    class="cancel-button">
+                <a href="{% url 'dashboard' %}" class="cancel-button">
                     Cancel
                 </a>
             </div>
