@@ -38,51 +38,6 @@
             line-height: 1.6;
         }
 
-        /* HEADER */
-        header {
-            width: 100%;
-            background: var(--burgundy);
-            padding: 18px 5%;
-            color: var(--white);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .header-container {
-            max-width: 1350px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 23px;
-            font-weight: bold;
-            color: var(--white);
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            background: var(--yellow);
-            color: var(--burgundy);
-            width: 30px;
-            height: 30px;
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 17px;
-        }
-
-        .logo span {
-            color: var(--yellow);
-        }
-
-        /* MAIN CONTENT */
         main {
             width: 92%;
             max-width: 1250px;
@@ -106,7 +61,6 @@
             color: var(--burgundy);
         }
 
-        /* FORM ELEMENTS */
         input,
         select,
         textarea {
@@ -135,7 +89,6 @@
             font-size: 15px;
         }
 
-        /* DJANGO MESSAGES */
         .messages {
             margin-bottom: 22px;
         }
@@ -162,7 +115,6 @@
             border-color: #F0C3C3;
         }
 
-        /* FOOTER */
         footer {
             width: 100%;
             text-align: center;
@@ -173,16 +125,7 @@
             background: var(--white);
         }
 
-        /* RESPONSIVE */
         @media (max-width: 600px) {
-            header {
-                padding: 15px 4%;
-            }
-
-            .logo {
-                font-size: 20px;
-            }
-
             main {
                 width: 94%;
                 margin: 25px auto;
@@ -196,14 +139,13 @@
 </head>
 
 <body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <span class="logo-icon">D</span>
-                Donation<span>Match</span>
-            </div>
-        </div>
-    </header>
+    {% if request.user.is_authenticated %}
+    {% if request.resolver_match.url_name != 'login' %}
+    {% if request.resolver_match.url_name != 'register' %}
+    {% include "accounts/navbar.html" %}
+    {% endif %}
+    {% endif %}
+    {% endif %}
     <main>
         {% if messages %}
         <div class="messages">
