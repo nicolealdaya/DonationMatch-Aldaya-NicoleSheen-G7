@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.db.models import Q
 from .forms import (
    UserRegistrationForm,
@@ -24,11 +25,7 @@ def register_view(request):
            return redirect("login")
    else:
        form = UserRegistrationForm()
-   return render(
-       request,
-       "accounts/register.html",
-       {"form": form}
-   )
+   return render(request, "accounts/register.html", {"form": form})
 
 def login_view(request):
    if request.method == "POST":
@@ -41,29 +38,19 @@ def login_view(request):
            return redirect("organization_dashboard")
    else:
        form = AuthenticationForm()
-   return render(
-       request,
-       "accounts/login.html",
-       {"form": form}
-   )
+   return render(request, "accounts/login.html", {"form": form})
 
 @login_required
 def donor_dashboard(request):
    if request.user.role != "donor":
        return redirect("organization_dashboard")
-   return render(
-       request,
-       "accounts/donor_dashboard.html"
-   )
+   return render(request, "accounts/donor_dashboard.html")
 
 @login_required
 def organization_dashboard(request):
    if request.user.role != "organization":
        return redirect("donor_dashboard")
-   return render(
-       request,
-       "accounts/organization_dashboard.html"
-   )
+   return render(request, "accounts/organization_dashboard.html")
 
 @login_required
 def create_post_view(request):
@@ -103,10 +90,7 @@ def create_post_view(request):
    return render(
        request,
        "accounts/create_post.html",
-       {
-           "form": form,
-           "post_type": post_type,
-       }
+       {"form": form, "post_type": post_type}
    )
 
 @login_required
@@ -146,6 +130,76 @@ def explore_view(request):
    )
 
 @login_required
+def my_posts_view(request):
+   if request.user.role == "donor":
+       donations = Donation.objects.filter(
+           user=request.user
+       ).select_related("category").order_by("-date_posted")
+       requests = None
+   elif request.user.role == "organization":
+       donations = None
+       requests = Request.objects.filter(
+           organization__user=request.user
+       ).select_related("category").order_by("-date_posted")
+   else:
+       return redirect("login")
+   return render(
+       request,
+       "accounts/my_posts.html",
+       {
+           "donations": donations,
+           "requests": requests,
+       }
+   )
+
+@login_required
+@require_POST
+def edit_post_view(request, post_type, post_id):
+   if post_type == "donation" and request.user.role == "donor":
+       post = get_object_or_404(
+           Donation,
+           pk=post_id,
+           user=request.user
+       )
+       form = DonationForm(request.POST, instance=post)
+   elif post_type == "request" and request.user.role == "organization":
+       post = get_object_or_404(
+           Request,
+           pk=post_id,
+           organization__user=request.user
+       )
+       form = RequestForm(request.POST, instance=post)
+   else:
+       return redirect("my_posts")
+   if form.is_valid():
+       form.save()
+       messages.success(request, "Your post has been updated successfully.")
+   else:
+       messages.error(request, form.errors.as_text())
+   return redirect("my_posts")
+
+@login_required
+@require_POST
+def delete_post_view(request, post_type, post_id):
+   if post_type == "donation" and request.user.role == "donor":
+       post = get_object_or_404(
+           Donation,
+           pk=post_id,
+           user=request.user
+       )
+   elif post_type == "request" and request.user.role == "organization":
+       post = get_object_or_404(
+           Request,
+           pk=post_id,
+           organization__user=request.user
+       )
+   else:
+       return redirect("my_posts")
+   post.delete()
+   messages.success(request, "Your post has been deleted successfully.")
+   return redirect("my_posts")
+
+@login_required
 def profile_view(request):
    if request.method == "POST":
        form = ProfileUpdateForm(
@@ -161,17 +215,10 @@ def profile_view(request):
            return redirect("profile")
    else:
        form = ProfileUpdateForm(instance=request.user)
-   return render(
-       request,
-       "accounts/profile.html",
-       {"form": form}
-   )
+   return render(request, "accounts/profile.html", {"form": form})
 
 def logout_view(request):
    if request.method == "POST":
        logout(request)
-       messages.success(
-           request,
-           "You have successfully logged out."
-       )
+       messages.success(request, "You have successfully logged out.")
    return redirect("login")
