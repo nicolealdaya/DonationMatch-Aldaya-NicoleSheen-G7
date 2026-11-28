@@ -3,7 +3,13 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, ProfileUpdateForm
+from .forms import (
+   UserRegistrationForm,
+   ProfileUpdateForm,
+   DonationForm,
+   RequestForm,
+)
+from .models import Organization
 
 def register_view(request):
    if request.method == "POST":
@@ -25,17 +31,13 @@ def register_view(request):
 
 def login_view(request):
    if request.method == "POST":
-       form = AuthenticationForm(
-           request,
-           data=request.POST
-       )
+       form = AuthenticationForm(request, data=request.POST)
        if form.is_valid():
            user = form.get_user()
            login(request, user)
            if user.role == "donor":
                return redirect("donor_dashboard")
-           elif user.role == "organization":
-               return redirect("organization_dashboard")
+           return redirect("organization_dashboard")
    else:
        form = AuthenticationForm()
    return render(
@@ -60,6 +62,50 @@ def organization_dashboard(request):
    return render(
        request,
        "accounts/organization_dashboard.html"
+   )
+
+@login_required
+def create_post_view(request):
+   if request.user.role == "donor":
+       form_class = DonationForm
+       post_type = "Donation"
+   elif request.user.role == "organization":
+       form_class = RequestForm
+       post_type = "Request"
+   else:
+       return redirect("login")
+   if request.method == "POST":
+       form = form_class(request.POST)
+       if form.is_valid():
+           post = form.save(commit=False)
+           if request.user.role == "donor":
+               post.user = request.user
+           else:
+               try:
+                   post.organization = request.user.organization
+               except Organization.DoesNotExist:
+                   messages.error(
+                       request,
+                       "Your organization profile could not be found."
+                   )
+                   return redirect("organization_dashboard")
+           post.save()
+           messages.success(
+               request,
+               f"Your {post_type.lower()} post has been created successfully."
+           )
+           if request.user.role == "donor":
+               return redirect("donor_dashboard")
+           return redirect("organization_dashboard")
+   else:
+       form = form_class()
+   return render(
+       request,
+       "accounts/create_post.html",
+       {
+           "form": form,
+           "post_type": post_type,
+       }
    )
 
 @login_required
