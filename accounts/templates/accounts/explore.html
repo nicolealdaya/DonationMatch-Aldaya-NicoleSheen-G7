@@ -1,6 +1,7 @@
 {% extends "accounts/base.html" %}
 {% block title %}Explore | DonationMatch{% endblock %}
 {% block content %}
+
 <style>
     .explore-page {
         max-width: 1120px;
@@ -72,7 +73,9 @@
         cursor: pointer;
     }
 
-    .filter-form button:hover {
+    .filter-form button:hover,
+    .contact-button:hover,
+    .close-modal:hover {
         background: #702830;
     }
 
@@ -175,6 +178,80 @@
         color: #8D343C;
     }
 
+    .contact-button {
+        width: 100%;
+        margin-top: 17px;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #8D343C;
+        color: #FFFFFF;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .contact-dialog {
+        width: calc(100% - 40px);
+        max-width: 420px;
+        padding: 28px;
+        border: none;
+        border-radius: 16px;
+        color: #30272A;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .contact-dialog::backdrop {
+        background: rgba(30, 20, 22, 0.6);
+    }
+
+    .contact-dialog h2 {
+        margin: 0 0 8px;
+        color: #8D343C;
+        font-size: 22px;
+    }
+
+    .contact-dialog p {
+        color: #71676A;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .contact-info {
+        padding: 15px;
+        margin: 18px 0;
+        border-radius: 10px;
+        background: #F9F1F2;
+        line-height: 2;
+        overflow-wrap: anywhere;
+    }
+
+    .contact-info strong {
+        color: #8D343C;
+    }
+
+    .contact-info a {
+        color: #8D343C;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .contact-info a:hover {
+        text-decoration: underline;
+    }
+
+    .close-modal {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 8px;
+        background: #8D343C;
+        color: #FFFFFF;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     .empty-state {
         padding: 35px 20px;
         border: 1px dashed #E1C8CC;
@@ -218,7 +295,9 @@
         }
     }
 </style>
+
 <div class="explore-page">
+
     <section class="explore-banner">
         <h1>Explore Posts</h1>
         <p>
@@ -226,58 +305,113 @@
             Find opportunities to give and help communities in need.
         </p>
     </section>
+
     <section class="filter-card">
         <h2>Find Posts</h2>
+
         <form method="GET" class="filter-form">
             <input type="text" name="search" placeholder="Search item name or description..."
                 value="{{ search_query }}">
+
             <select name="category">
                 <option value="">All Categories</option>
+
                 {% for category in categories %}
-                <option value="{{ category.id }}">
-                    {{ category.name }}
-                </option>
+                <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
+
             <button type="submit">Search</button>
         </form>
+
         <a href="{% url 'explore' %}" class="clear-filter">
             Clear Filters
         </a>
     </section>
+
     <section class="posts-section">
         <div class="section-heading">
             <h2>Available Donations</h2>
             <span class="post-count">{{ donations|length }} Posts</span>
         </div>
+
         {% if donations %}
         <div class="posts-grid">
+
             {% for donation in donations %}
             <article class="post-card">
+
                 <div class="post-card-top">
                     <span class="post-type">Donation</span>
                     <span class="post-category">
                         {{ donation.category.name }}
                     </span>
                 </div>
+
                 <h3>{{ donation.item_name }}</h3>
                 <p class="post-description">{{ donation.description }}</p>
+
                 <div class="post-details">
                     <div>
                         <strong>Quantity:</strong>
                         {{ donation.quantity }}
                     </div>
+
                     <div>
                         <strong>Donor:</strong>
                         {{ donation.user.full_name }}
                     </div>
+
                     <div>
                         <strong>Date Posted:</strong>
                         {{ donation.date_posted|date:"M d, Y" }}
                     </div>
                 </div>
+
+                {% if request.user.role == "organization" and donation.user_id != request.user.id %}
+                <button type="button" class="contact-button"
+                    onclick="document.getElementById('donor-contact-{{ donation.id }}').showModal()">
+                    Contact Donor
+                </button>
+
+                <dialog id="donor-contact-{{ donation.id }}" class="contact-dialog">
+                    <h2>Contact Donor</h2>
+                    <p>You can contact this donor using the registered details below.</p>
+
+                    <div class="contact-info">
+                        <div>
+                            <strong>Name:</strong>
+                            {{ donation.user.full_name }}
+                        </div>
+
+                        <div>
+                            <strong>Email:</strong>
+                            {% if donation.user.email %}
+                            <a href="mailto:{{ donation.user.email }}">{{ donation.user.email }}</a>
+                            {% else %}
+                            Not provided
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <strong>Contact Number:</strong>
+                            {% if donation.user.contact_number %}
+                            {{ donation.user.contact_number }}
+                            {% else %}
+                            Not provided
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="button" class="close-modal" onclick="this.closest('dialog').close()">
+                        Close
+                    </button>
+                </dialog>
+                {% endif %}
+
             </article>
             {% endfor %}
+
         </div>
         {% else %}
         <div class="empty-state">
@@ -286,39 +420,90 @@
         </div>
         {% endif %}
     </section>
+
     <section class="posts-section">
         <div class="section-heading">
             <h2>Organization Requests</h2>
             <span class="post-count">{{ requests|length }} Posts</span>
         </div>
+
         {% if requests %}
         <div class="posts-grid">
+
             {% for post in requests %}
             <article class="post-card">
+
                 <div class="post-card-top">
                     <span class="post-type">Request</span>
                     <span class="post-category">
                         {{ post.category.name }}
                     </span>
                 </div>
+
                 <h3>{{ post.item_name }}</h3>
                 <p class="post-description">{{ post.description }}</p>
+
                 <div class="post-details">
                     <div>
                         <strong>Quantity Needed:</strong>
                         {{ post.quantity }}
                     </div>
+
                     <div>
                         <strong>Organization:</strong>
                         {{ post.organization.organization_name }}
                     </div>
+
                     <div>
                         <strong>Date Posted:</strong>
                         {{ post.date_posted|date:"M d, Y" }}
                     </div>
                 </div>
+
+                {% if request.user.role == "donor" and post.organization.user_id != request.user.id %}
+                <button type="button" class="contact-button"
+                    onclick="document.getElementById('organization-contact-{{ post.id }}').showModal()">
+                    Contact Organization
+                </button>
+
+                <dialog id="organization-contact-{{ post.id }}" class="contact-dialog">
+                    <h2>Contact Organization</h2>
+                    <p>You can contact this organization using the registered details below.</p>
+
+                    <div class="contact-info">
+                        <div>
+                            <strong>Name:</strong>
+                            {{ post.organization.user.full_name }}
+                        </div>
+
+                        <div>
+                            <strong>Email:</strong>
+                            {% if post.organization.user.email %}
+                            <a href="mailto:{{ post.organization.user.email }}">{{ post.organization.user.email }}</a>
+                            {% else %}
+                            Not provided
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <strong>Contact Number:</strong>
+                            {% if post.organization.user.contact_number %}
+                            {{ post.organization.user.contact_number }}
+                            {% else %}
+                            Not provided
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="button" class="close-modal" onclick="this.closest('dialog').close()">
+                        Close
+                    </button>
+                </dialog>
+                {% endif %}
+
             </article>
             {% endfor %}
+
         </div>
         {% else %}
         <div class="empty-state">
@@ -327,5 +512,7 @@
         </div>
         {% endif %}
     </section>
+
 </div>
+
 {% endblock %}
