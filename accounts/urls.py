@@ -24,4 +24,9 @@ urlpatterns = [
        views.profile_view,
        name="profile"
    ),
+   path(
+   "explore/",
+   views.explore_view,
+   name="explore"
+),
 ]
